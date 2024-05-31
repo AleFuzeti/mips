@@ -1,0 +1,25 @@
+leituraArquivo:
+    li $v0, 14                  # System call para leitura
+    syscall                     # Chama o sistema
+    beqz $v0, fimLeitura        # Se o valor de retorno for 0, sai da função
+
+    lb  $t0, ($a1)              # Caractere lido
+    print_char $t0              # Imprime o caractere lido
+
+    beq $t0, 32, leituraArquivo # Se o caractere for um espaço, continua a leitura
+    beq $t0, 13, leituraArquivo # Se o caractere for um \r, continua a leitura
+    beq $t0, 10, l              # Se o caractere for um \n, continua a leitura
+    
+    subi $t0, $t0, 48           # Converte o caractere para inteiro
+    print_int $t0
+    
+    mul $t1, $t1, 10            # Casa decimal para a esquerda
+    add $t1, $t1, $t0           # Soma o valor lido
+    j leituraArquivo            # Continua a leitura
+    l:
+        add $t2, $t2, 1         # Incrementa o contador de linhas
+        li $t1, 0               # Zera o valor lido
+        j leituraArquivo        # Continua a leitura
+    fimLeitura:
+    add $t0, $t2, $t1           # Retorna o valor lido
+    jr $ra                      # Retorna para a função que chamou 
